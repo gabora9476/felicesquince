@@ -124,7 +124,7 @@
     top:35.6%;
     left:50%;
     transform:translateX(-50%);
-    width:min(70%, 245px);
+    width:clamp(150px, 40.83%, 245px); /* 245px es el tamaño de escritorio; en móvil escala junto con la imagen sin bajar de 150px */
     z-index:8;
     pointer-events:none;
   }
@@ -133,7 +133,7 @@
     top:48.6%;
     left:50%;
     transform:translateX(-50%);
-    width:min(72%, 250px);
+    width:clamp(160px, 41.67%, 250px); /* 250px es el tamaño de escritorio; en móvil escala junto con la imagen sin bajar de 160px */
     z-index:8;
     pointer-events:none;
   }
@@ -340,7 +340,7 @@ const CONFIG = {
   telefonoWhatsapp  : "584228745777",
   urlMaps           : `https://www.google.com/maps/place/10°29'16.1"N+66°49'31.5"W/@10.4878056,-66.8254167,17z/data=!3m1!4b1!4m4!3m3!8m2!3d10.4878056!4d-66.8254167?hl=es&entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D`,
   audioArchivo      : "1.mp3",
-  audioVolumen      : 0.12   // 0.0 (silencio) a 1.0 (máximo) — 0.5 = volumen medio
+  audioVolumen      : 0.12  // 0.0 (silencio) a 1.0 (máximo) — volumen bajo, solo de ambiente
 };
 
 /* ================================================================
