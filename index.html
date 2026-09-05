@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis XV Años · Dayanis Diaz</title>
+<meta name="description" content="Invitación digital a los XV años de Dayanis Diaz">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     PALETA DE COLORES — tomada de la imagen base para que todo
+     combine con el fondo (azul cielo, azul real, plata y dorado)
+     ============================================================ */
+  :root{
+    --cielo-claro:#eaf6ff;
+    --cielo:#8fcff5;
+    --cielo-profundo:#5fb0e8;
+    --azul-real:#1b3a6b;
+    --azul-texto:#0b1626;
+    --plata:#e3ecf5;
+    --plata-sombra:#9fb3c8;
+    --dorado:#cf9f4e;
+    --dorado-claro:#f0dba0;
+    --vidrio:rgba(255,255,255,0.32);
+    --vidrio-borde:rgba(255,255,255,0.65);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:linear-gradient(180deg,#cfe9fb 0%,#a9d8f2 100%);
+    overflow-x:hidden;
+    color:var(--azul-texto);
+    font-family:'Cormorant Garamond',serif;
+  }
+
+  /* Contenedor centrado tipo "tarjeta" para pantallas grandes */
+  .pagina{
+    position:relative;
+    max-width:600px;
+    margin:0 auto;
+    background:#bfe2f7;
+    box-shadow:0 0 70px rgba(10,40,80,0.28);
+    min-height:100vh;
+  }
+
+  /* ============================================================
+     CAPAS FIJAS DE EFECTOS (sobre toda la página, no bloquean toques)
+     ============================================================ */
+  .capa-efectos{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:40;
+    overflow:hidden;
+  }
+  #campoDestellos{ z-index:20; }
+  #capaMariposas{ z-index:45; }
+  #capaLluvia{ z-index:50; }
+
+  /* Destello / chispa blanca ambiental */
+  .destello{
+    position:absolute;
+    width:10px;
+    height:10px;
+    opacity:0;
+    animation-name:centellear;
+    animation-iteration-count:infinite;
+    animation-timing-function:ease-in-out;
+  }
+  .destello svg{ width:100%; height:100%; display:block; }
+
+  @keyframes centellear{
+    0%,100%{opacity:0;transform:scale(.3) rotate(0deg);}
+    50%{opacity:var(--brillo,.9);transform:scale(1) rotate(25deg);}
+  }
+
+  /* ============================================================
+     ESTRUCTURA DE LA INVITACIÓN (recortes de la imagen original)
+     ============================================================ */
+  .franja{
+    position:relative;
+    line-height:0;
+    width:100%;
+  }
+  .franja img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+  #franjaA img{ aspect-ratio:1200/1158; }
+  #franjaB img{ aspect-ratio:1200/169; }
+  #franjaC img{ aspect-ratio:1200/1271; }
+
+  /* Punto interactivo invisible, ubicado sobre un elemento gráfico
+     de la imagen (marcador, sobre, texto "Si asistiré") */
+  .punto-interactivo{
+    position:absolute;
+    background:transparent;
+    border:none;
+    padding:0;
+    margin:0;
+    cursor:pointer;
+    display:block;
+  }
+  .punto-interactivo::after{
+    content:'';
+    position:absolute;
+    inset:-10%;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.5),rgba(255,255,255,0) 70%);
+    opacity:0;
+    animation:pulsoSuave 3.4s ease-in-out infinite;
+  }
+  @keyframes pulsoSuave{
+    0%,100%{opacity:0;transform:scale(.88);}
+    50%{opacity:.6;transform:scale(1.08);}
+  }
+
+  /* Destellos animados específicos sobre el texto "Celebraré" */
+  .brillo-celebrare{
+    position:absolute;
+    pointer-events:none;
+  }
+  .brillo-celebrare .chispa{
+    position:absolute;
+    width:22px;
+    height:22px;
+    animation:centellear 2.6s ease-in-out infinite;
+  }
+  .brillo-celebrare .chispa svg{ width:100%; height:100%; }
+
+  /* ============================================================
+     SECCIONES INSERTADAS (calendario y contador) — se mezclan con
+     el tono de azul de la imagen para que no se note el corte
+     ============================================================ */
+  .seccion-insertada{
+    position:relative;
+    background:linear-gradient(180deg,#93d3f6 0%,#86c9f2 55%,#93d3f6 100%);
+    padding:34px 22px 40px;
+    overflow:hidden;
+  }
+  .seccion-insertada::before,
+  .seccion-insertada::after{
+    content:'';
+    position:absolute;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 70%);
+    pointer-events:none;
+  }
+  .seccion-insertada::before{ top:-90px; left:-70px; }
+  .seccion-insertada::after{ bottom:-90px; right:-70px; }
+
+  .adorno-separador{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .adorno-separador span{
+    width:70px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--dorado),transparent);
+  }
+  .adorno-separador i{
+    width:8px;
+    height:8px;
+    background:var(--dorado);
+    transform:rotate(45deg);
+    display:inline-block;
+    box-shadow:0 0 6px rgba(207,159,78,.8);
+  }
+
+  .titulo-mini{
+    text-align:center;
+    font-family:'Cinzel',serif;
+    font-weight:500;
+    letter-spacing:3px;
+    font-size:15px;
+    color:var(--azul-real);
+    text-transform:uppercase;
+    margin:0 0 20px;
+  }
+
+  /* ---------- Calendario ---------- */
+  .tarjeta{
+    max-width:360px;
+    margin:0 auto;
+    background:var(--vidrio);
+    border:1px solid var(--vidrio-borde);
+    border-radius:20px;
+    box-shadow:0 10px 26px rgba(15,50,90,.22), inset 0 0 22px rgba(255,255,255,.35);
+    -webkit-backdrop-filter:blur(6px);
+    backdrop-filter:blur(6px);
+    padding:22px 18px 24px;
+    position:relative;
+  }
+  .cal-mes{
+    text-align:center;
+    font-family:'Cinzel',serif;
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:6px;
+    color:var(--azul-real);
+    margin:0 0 4px;
+  }
+  .cal-anio{
+    text-align:center;
+    font-size:15px;
+    letter-spacing:4px;
+    color:var(--plata-sombra);
+    margin:0 0 16px;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px 4px;
+  }
+  .cal-dsem{
+    text-align:center;
+    font-family:'Cinzel',serif;
+    font-size:12px;
+    letter-spacing:1px;
+    color:var(--dorado);
+    padding-bottom:6px;
+    border-bottom:1px solid rgba(207,159,78,.4);
+    margin-bottom:4px;
+  }
+  .cal-dia{
+    position:relative;
+    text-align:center;
+    font-size:16px;
+    padding:8px 0;
+    color:var(--azul-texto);
+  }
+  .cal-dia.vacio{ visibility:hidden; }
+  .cal-dia.resaltado{
+    font-family:'Cinzel',serif;
+    font-weight:700;
+    color:#fff;
+  }
+  .cal-dia.resaltado .aro{
+    position:absolute;
+    inset:2px;
+    margin:auto;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#3f6ea8,#16233f 75%);
+    border:1.5px solid var(--dorado-claro);
+    box-shadow:0 0 0 2px rgba(207,159,78,.35), 0 0 14px rgba(207,159,78,.65);
+    animation:latido 2.4s ease-in-out infinite;
+    z-index:0;
+  }
+  .cal-dia.resaltado span{
+    position:relative;
+    z-index:1;
+    display:block;
+    line-height:32px;
+  }
+  @keyframes latido{
+    0%,100%{transform:scale(1);box-shadow:0 0 0 2px rgba(207,159,78,.35),0 0 10px rgba(207,159,78,.55);}
+    50%{transform:scale(1.08);box-shadow:0 0 0 2px rgba(207,159,78,.5),0 0 18px rgba(207,159,78,.85);}
+  }
+  .cal-nota{
+    text-align:center;
+    margin-top:16px;
+    font-family:'Cinzel',serif;
+    font-size:13px;
+    letter-spacing:2px;
+    color:var(--azul-real);
+  }
+
+  /* ---------- Contador ---------- */
+  .contador-fila{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    max-width:400px;
+    margin:0 auto;
+  }
+  .contador-bloque{
+    background:linear-gradient(160deg,#1b3a6b,#243f68 60%,#16233f);
+    border:1px solid rgba(255,255,255,.4);
+    border-radius:14px;
+    box-shadow:0 6px 14px rgba(10,25,50,.35), inset 0 0 12px rgba(255,255,255,.08);
+    padding:12px 6px;
+    min-width:74px;
+    text-align:center;
+  }
+  .contador-num{
+    font-family:'Cinzel',serif;
+    font-weight:600;
+    font-size:30px;
+    color:var(--dorado-claro);
+    letter-spacing:1px;
+    line-height:1;
+  }
+  .contador-lbl{
+    display:block;
+    margin-top:6px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--plata);
+    font-family:'Cinzel',serif;
+  }
+  .contador-sep{
+    font-family:'Cinzel',serif;
+    font-size:26px;
+    color:var(--dorado);
+    transform:translateY(-6px);
+  }
+  .contador-fin{
+    text-align:center;
+    font-family:'Cinzel',serif;
+    letter-spacing:2px;
+    color:var(--azul-real);
+    font-size:16px;
+  }
+
+  /* ============================================================
+     MARIPOSAS Y LLUVIA DE SOBRES
+     ============================================================ */
+  .mariposa-volando{
+    position:fixed;
+    width:34px;
+    height:28px;
+    pointer-events:none;
+    will-change:transform,opacity;
+    animation:volar 1.9s ease-out forwards;
+  }
+  .mariposa-volando svg{ width:100%; height:100%; display:block; }
+
+  @keyframes volar{
+    0%{ transform:translate(0,0) rotate(0deg) scale(.4); opacity:0; }
+    12%{ opacity:1; transform:translate(var(--dx1),var(--dy1)) rotate(var(--rot1)) scale(1); }
+    100%{ transform:translate(var(--dx2),var(--dy2)) rotate(var(--rot2)) scale(.85); opacity:0; }
+  }
+
+  .sobre-cayendo{
+    position:absolute;
+    top:-60px;
+    width:38px;
+    height:auto;
+    animation-name:caer;
+    animation-timing-function:linear;
+    animation-fill-mode:forwards;
+  }
+  .sobre-cayendo svg{ width:100%; height:auto; display:block; }
+
+  @keyframes caer{
+    0%{ transform:translate(0,0) rotate(0deg); }
+    100%{ transform:translate(var(--deriva),115vh) rotate(var(--giro)); }
+  }
+
+  /* ============================================================
+     ACCESIBILIDAD / DETALLES FINALES
+     ============================================================ */
+  button.punto-interactivo{ -webkit-appearance:none; appearance:none; }
+  ::selection{ background:rgba(27,58,107,.25); }
+
+  @media (min-width:601px){
+    .pagina{ border-radius:6px; overflow:hidden; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Capas fijas de efectos visuales, no interfieren con los toques -->
+<div class="capa-efectos" id="campoDestellos" aria-hidden="true"></div>
+<div class="capa-efectos" id="capaMariposas" aria-hidden="true"></div>
+<div class="capa-efectos" id="capaLluvia" aria-hidden="true"></div>
+
+<main class="pagina">
+
+  <!-- ===================== FRANJA A: encabezado + "Los Celebraré" ===================== -->
+  <section class="franja" id="franjaA">
+    <img src="slice-a.webp" alt="Mis XV años — Dayanis Diaz" loading="eager">
+    <div class="brillo-celebrare" style="top:86.3%;left:23.5%;width:28.2%;height:6.8%;">
+      <div class="chispa" style="top:10%;left:6%;animation-delay:.1s;">
+        <svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
+      </div>
+      <div class="chispa" style="top:0%;left:46%;width:16px;height:16px;animation-delay:.9s;">
+        <svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
+      </div>
+      <div class="chispa" style="top:40%;left:82%;width:18px;height:18px;animation-delay:1.6s;">
+        <svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
+      </div>
+      <div class="chispa" style="top:55%;left:-4%;width:14px;height:14px;animation-delay:2.2s;">
+        <svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CALENDARIO (insertado debajo de "Celebraré") ===================== -->
+  <section class="seccion-insertada">
+    <div class="adorno-separador"><span></span><i></i><span></span></div>
+    <p class="titulo-mini">Guarda la fecha</p>
+    <div class="tarjeta">
+      <p class="cal-mes" id="calMes">OCTUBRE</p>
+      <p class="cal-anio" id="calAnio">2026</p>
+      <div class="cal-grid" id="calGrid"><!-- se genera con JavaScript --></div>
+      <p class="cal-nota">Nos vemos el 3 de Octubre</p>
+    </div>
+  </section>
+
+  <!-- ===================== FRANJA B: "Faltando:" ===================== -->
+  <section class="franja" id="franjaB">
+    <img src="slice-b.webp" alt="Faltando" loading="lazy">
+  </section>
+
+  <!-- ===================== CONTADOR (insertado debajo de "Faltando") ===================== -->
+  <section class="seccion-insertada">
+    <div class="adorno-separador"><span></span><i></i><span></span></div>
+    <p class="titulo-mini">Cuenta regresiva</p>
+    <div class="contador-fila" id="filaContador">
+      <div class="contador-bloque">
+        <div class="contador-num" id="numHoras">00</div>
+        <span class="contador-lbl">Horas</span>
+      </div>
+      <div class="contador-sep">:</div>
+      <div class="contador-bloque">
+        <div class="contador-num" id="numMinutos">00</div>
+        <span class="contador-lbl">Min</span>
+      </div>
+      <div class="contador-sep">:</div>
+      <div class="contador-bloque">
+        <div class="contador-num" id="numSegundos">00</div>
+        <span class="contador-lbl">Seg</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FRANJA C: resto de la invitación (con puntos interactivos) ===================== -->
+  <section class="franja" id="franjaC">
+    <img src="slice-c.webp" alt="Lugar, hora, sugerencia de regalo y confirmación de asistencia" loading="lazy">
+
+    <!-- Ubicación: abre Google Maps -->
+    <button class="punto-interactivo" id="btnMapa"
+      style="top:4.0%;left:32.9%;width:34.4%;height:9.8%;"
+      aria-label="Abrir la ubicación del salón en Google Maps"></button>
+
+    <!-- Sobre dorado: dispara la lluvia de sobres -->
+    <button class="punto-interactivo" id="btnSobre"
+      style="top:40.0%;left:27.3%;width:31.5%;height:13.8%;"
+      aria-label="Lluvia de sobres"></button>
+
+    <!-- "Si asistiré": abre WhatsApp -->
+    <button class="punto-interactivo" id="btnConfirmar"
+      style="top:64.9%;left:25.9%;width:43.3%;height:7.6%;"
+      aria-label="Confirmar asistencia por WhatsApp"></button>
+  </section>
+
+</main>
+
+<script>
+/* ================================================================
+   CONFIGURACIÓN GENERAL — edita aquí los datos del evento
+   ================================================================ */
+const CONFIG = {
+  nombreQuinceanera : "Dayanis Diaz",
+  fechaEvento       : "2026-10-03T20:00:00-04:00", // fecha/hora del evento (hora de Venezuela)
+  mesCalendario     : 9,      // Octubre = índice 9 (Enero = 0)
+  anioCalendario    : 2026,
+  diaResaltado      : 3,
+  telefonoWhatsapp  : "584228745777",
+  direccionMaps     : "Salón Tocome de los Ruices, Municipio Sucre"
+};
+
+/* ================================================================
+   1) DESTELLOS AMBIENTALES DE FONDO
+   ================================================================ */
+(function crearDestellosAmbientales(){
+  const contenedor = document.getElementById('campoDestellos');
+  const total = 46;
+  const svgChispa = '<svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="#ffffff"/></svg>';
+  for(let i=0;i<total;i++){
+    const d = document.createElement('div');
+    d.className = 'destello';
+    const tam = 4 + Math.random()*9;
+    d.style.width = tam+'px';
+    d.style.height = tam+'px';
+    d.style.top = (Math.random()*100)+'%';
+    d.style.left = (Math.random()*100)+'%';
+    d.style.setProperty('--brillo', (0.5 + Math.random()*0.5).toFixed(2));
+    d.style.animationDuration = (2 + Math.random()*3.5)+'s';
+    d.style.animationDelay = (Math.random()*5)+'s';
+    d.innerHTML = svgChispa;
+    contenedor.appendChild(d);
+  }
+})();
+
+/* ================================================================
+   2) MARIPOSAS AZULES AL TOCAR CUALQUIER PARTE DE LA PÁGINA
+   ================================================================ */
+const capaMariposas = document.getElementById('capaMariposas');
+
+function svgMariposa(){
+  return `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="alaG" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#bfe3ff"/>
+        <stop offset="100%" stop-color="#3f7fd1"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 38 C 30 -4, -6 2, 4 30 C 9 48, 32 46, 50 38 Z" fill="url(#alaG)" stroke="#16305c" stroke-width="2"/>
+    <path d="M50 38 C 70 -4, 106 2, 96 30 C 91 48, 68 46, 50 38 Z" fill="url(#alaG)" stroke="#16305c" stroke-width="2"/>
+    <path d="M50 40 C 34 58, 14 66, 22 76 C 36 74, 46 56, 50 40 Z" fill="#8fc4f2" stroke="#16305c" stroke-width="1.6"/>
+    <path d="M50 40 C 66 58, 86 66, 78 76 C 64 74, 54 56, 50 40 Z" fill="#8fc4f2" stroke="#16305c" stroke-width="1.6"/>
+    <line x1="50" y1="18" x2="50" y2="64" stroke="#16305c" stroke-width="3" stroke-linecap="round"/>
+  </svg>`;
+}
+
+let mariposasActivas = 0;
+const MAX_MARIPOSAS = 34;
+
+function lanzarMariposa(x, y){
+  if(mariposasActivas >= MAX_MARIPOSAS) return;
+  mariposasActivas++;
+
+  const m = document.createElement('div');
+  m.className = 'mariposa-volando';
+  const lado = (Math.random() < 0.5 ? -1 : 1);
+  const dx1 = (lado*(20 + Math.random()*30)).toFixed(0)+'px';
+  const dy1 = (-(40 + Math.random()*30)).toFixed(0)+'px';
+  const dx2 = (lado*(50 + Math.random()*70)).toFixed(0)+'px';
+  const dy2 = (-(140 + Math.random()*120)).toFixed(0)+'px';
+  const tam = 22 + Math.random()*20;
+
+  m.style.left = (x - tam/2)+'px';
+  m.style.top = (y - tam/2)+'px';
+  m.style.width = tam+'px';
+  m.style.height = (tam*0.8)+'px';
+  m.style.setProperty('--dx1', dx1);
+  m.style.setProperty('--dy1', dy1);
+  m.style.setProperty('--dx2', dx2);
+  m.style.setProperty('--dy2', dy2);
+  m.style.setProperty('--rot1', (lado*18)+'deg');
+  m.style.setProperty('--rot2', (lado*-24)+'deg');
+  m.innerHTML = svgMariposa();
+
+  m.addEventListener('animationend', () => { m.remove(); mariposasActivas--; });
+  capaMariposas.appendChild(m);
+}
+
+document.addEventListener('pointerdown', (e) => {
+  // Evita interferir si se está tocando un punto interactivo (igual lanzamos mariposa, solo tomamos coords)
+  lanzarMariposa(e.clientX, e.clientY);
+});
+
+/* ================================================================
+   3) CALENDARIO DE OCTUBRE — genera la cuadrícula y enmarca el día 3
+   ================================================================ */
+(function generarCalendario(){
+  const nombresMes = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+  document.getElementById('calMes').textContent = nombresMes[CONFIG.mesCalendario];
+  document.getElementById('calAnio').textContent = CONFIG.anioCalendario;
+
+  const grid = document.getElementById('calGrid');
+  const diasSemana = ['D','L','M','M','J','V','S'];
+  diasSemana.forEach(d=>{
+    const el = document.createElement('div');
+    el.className = 'cal-dsem';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const primerDia = new Date(CONFIG.anioCalendario, CONFIG.mesCalendario, 1);
+  const diaSemanaInicio = primerDia.getDay(); // 0 = domingo
+  const totalDias = new Date(CONFIG.anioCalendario, CONFIG.mesCalendario+1, 0).getDate();
+
+  for(let i=0;i<diaSemanaInicio;i++){
+    const vacio = document.createElement('div');
+    vacio.className = 'cal-dia vacio';
+    grid.appendChild(vacio);
+  }
+
+  for(let dia=1; dia<=totalDias; dia++){
+    const celda = document.createElement('div');
+    if(dia === CONFIG.diaResaltado){
+      celda.className = 'cal-dia resaltado';
+      celda.innerHTML = '<span class="aro"></span><span>'+dia+'</span>';
+    }else{
+      celda.className = 'cal-dia';
+      celda.textContent = dia;
+    }
+    grid.appendChild(celda);
+  }
+})();
+
+/* ================================================================
+   4) CONTADOR REGRESIVO (horas, minutos y segundos)
+   ================================================================ */
+(function contadorRegresivo(){
+  const fechaObjetivo = new Date(CONFIG.fechaEvento).getTime();
+  const elHoras = document.getElementById('numHoras');
+  const elMin   = document.getElementById('numMinutos');
+  const elSeg   = document.getElementById('numSegundos');
+  const fila    = document.getElementById('filaContador');
+
+  function actualizar(){
+    const ahora = Date.now();
+    const diff = fechaObjetivo - ahora;
+
+    if(diff <= 0){
+      fila.innerHTML = '<p class="contador-fin">¡Hoy celebramos mis XV años!</p>';
+      clearInterval(temporizador);
+      return;
+    }
+    const horas   = Math.floor(diff / 3600000);
+    const minutos = Math.floor((diff % 3600000) / 60000);
+    const segundos= Math.floor((diff % 60000) / 1000);
+
+    elHoras.textContent = String(horas).padStart(2,'0');
+    elMin.textContent   = String(minutos).padStart(2,'0');
+    elSeg.textContent   = String(segundos).padStart(2,'0');
+  }
+
+  actualizar();
+  const temporizador = setInterval(actualizar, 1000);
+})();
+
+/* ================================================================
+   5) MARCADOR DE UBICACIÓN → GOOGLE MAPS
+   ================================================================ */
+document.getElementById('btnMapa').addEventListener('click', () => {
+  const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(CONFIG.direccionMaps);
+  window.open(url, '_blank', 'noopener');
+});
+
+/* ================================================================
+   6) SOBRE DORADO → LLUVIA DE SOBRES EN TODA LA PÁGINA
+   ================================================================ */
+const capaLluvia = document.getElementById('capaLluvia');
+let lluviaEnCurso = false;
+
+function svgSobre(){
+  return `<svg viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="1" width="58" height="42" rx="4" fill="#e6c465" stroke="#a97a1e" stroke-width="1.5"/>
+    <path d="M2,3 L30,26 L58,3" fill="none" stroke="#a97a1e" stroke-width="1.5"/>
+    <path d="M2,4 L2,41 L23,21 Z" fill="#f3dd97" opacity=".55"/>
+    <path d="M58,4 L58,41 L37,21 Z" fill="#f3dd97" opacity=".55"/>
+    <circle cx="30" cy="22" r="4.5" fill="#fffbe9" stroke="#a97a1e" stroke-width="1"/>
+  </svg>`;
+}
+
+function lluviaDeSobres(){
+  if(lluviaEnCurso) return;
+  lluviaEnCurso = true;
+
+  const totalSobres = 42;
+  for(let i=0;i<totalSobres;i++){
+    setTimeout(()=>{
+      const s = document.createElement('div');
+      s.className = 'sobre-cayendo';
+      const tam = 26 + Math.random()*22;
+      s.style.left = (Math.random()*96)+'%';
+      s.style.width = tam+'px';
+      s.style.setProperty('--deriva', ((Math.random()*2-1)*80).toFixed(0)+'px');
+      s.style.setProperty('--giro', ((Math.random()*2-1)*260).toFixed(0)+'deg');
+      s.style.animationDuration = (3.2 + Math.random()*2.2)+'s';
+      s.innerHTML = svgSobre();
+      capaLluvia.appendChild(s);
+      s.addEventListener('animationend', ()=> s.remove());
+    }, i*70);
+  }
+
+  setTimeout(()=>{ lluviaEnCurso = false; }, totalSobres*70 + 5600);
+}
+
+document.getElementById('btnSobre').addEventListener('click', lluviaDeSobres);
+
+/* ================================================================
+   7) "SI ASISTIRÉ" → CONFIRMAR POR WHATSAPP
+   ================================================================ */
+document.getElementById('btnConfirmar').addEventListener('click', () => {
+  const mensaje = 'Hola, confirmo mi asistencia a la fiesta de 15 años de ' + CONFIG.nombreQuinceanera + '. ¡Nos vemos allá!';
+  const url = 'https://wa.me/' + CONFIG.telefonoWhatsapp + '?text=' + encodeURIComponent(mensaje);
+  window.open(url, '_blank', 'noopener');
+});
+</script>
+
+</body>
+</html>
