@@ -36,6 +36,19 @@
     overflow-x:hidden;
     color:var(--azul-texto);
     font-family:'Cormorant Garamond',serif;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none; /* evita el menú "Guardar imagen" al mantener presionado en iOS */
+  }
+
+  img{
+    -webkit-user-drag:none;
+    user-drag:none;
+    -khtml-user-drag:none;
+    -moz-user-drag:none;
+    -o-user-drag:none;
+    pointer-events:none; /* bloquea clic derecho / arrastre / long-press directo sobre la imagen */
   }
 
   .pagina{
@@ -248,7 +261,7 @@
 
 <main class="pagina">
   <div class="marco">
-    <img src="invitacion_base.png" alt="Mis XV años — Dayanis Diaz" loading="eager" fetchpriority="high" decoding="async">
+    <img src="invitacion_base.png" alt="Mis XV años — Dayanis Diaz" loading="eager" fetchpriority="high" decoding="async" draggable="false" oncontextmenu="return false;">
 
     <!-- Destellos animados sobre "Celebraré" -->
     <div class="brillo-celebrare" style="top:32.93%;left:25.88%;width:22.35%;height:2.83%;">
@@ -278,6 +291,11 @@
     <div class="widget-contador">
       <div class="tarjeta-vidrio cont-tarjeta" id="filaContador">
         <div class="cont-bloque">
+          <div class="cont-num" id="numDias">00</div>
+          <span class="cont-lbl">DÍAS</span>
+        </div>
+        <div class="cont-sep">:</div>
+        <div class="cont-bloque">
           <div class="cont-num" id="numHoras">00</div>
           <span class="cont-lbl">HRS</span>
         </div>
@@ -285,11 +303,6 @@
         <div class="cont-bloque">
           <div class="cont-num" id="numMinutos">00</div>
           <span class="cont-lbl">MIN</span>
-        </div>
-        <div class="cont-sep">:</div>
-        <div class="cont-bloque">
-          <div class="cont-num" id="numSegundos">00</div>
-          <span class="cont-lbl">SEG</span>
         </div>
       </div>
     </div>
@@ -311,6 +324,9 @@
   </div>
 </main>
 
+<!-- Audio de ambientación de fondo -->
+<audio id="audioFondo" src="1.mp3" loop preload="auto" playsinline></audio>
+
 <script>
 /* ================================================================
    CONFIGURACIÓN GENERAL — edita aquí los datos del evento
@@ -322,7 +338,9 @@ const CONFIG = {
   anioCalendario    : 2026,
   diaResaltado      : 3,
   telefonoWhatsapp  : "584228745777",
-  direccionMaps     : "Salón Tocome de los Ruices, Municipio Sucre"
+  urlMaps           : `https://www.google.com/maps/place/10°29'16.1"N+66°49'31.5"W/@10.4878056,-66.8254167,17z/data=!3m1!4b1!4m4!3m3!8m2!3d10.4878056!4d-66.8254167?hl=es&entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D`,
+  audioArchivo      : "1.mp3",
+  audioVolumen      : 0.5   // 0.0 (silencio) a 1.0 (máximo) — 0.5 = volumen medio
 };
 
 /* ================================================================
@@ -442,9 +460,9 @@ document.addEventListener('pointerdown', (e) => {
    ================================================================ */
 (function contadorRegresivo(){
   const fechaObjetivo = new Date(CONFIG.fechaEvento).getTime();
+  const elDias  = document.getElementById('numDias');
   const elHoras = document.getElementById('numHoras');
   const elMin   = document.getElementById('numMinutos');
-  const elSeg   = document.getElementById('numSegundos');
   const fila    = document.getElementById('filaContador');
 
   function actualizar(){
@@ -456,25 +474,24 @@ document.addEventListener('pointerdown', (e) => {
       clearInterval(temporizador);
       return;
     }
-    const horas   = Math.floor(diff / 3600000);
+    const dias    = Math.floor(diff / 86400000);
+    const horas   = Math.floor((diff % 86400000) / 3600000);
     const minutos = Math.floor((diff % 3600000) / 60000);
-    const segundos= Math.floor((diff % 60000) / 1000);
 
+    elDias.textContent  = String(dias).padStart(2,'0');
     elHoras.textContent = String(horas).padStart(2,'0');
     elMin.textContent   = String(minutos).padStart(2,'0');
-    elSeg.textContent   = String(segundos).padStart(2,'0');
   }
 
   actualizar();
-  const temporizador = setInterval(actualizar, 1000);
+  const temporizador = setInterval(actualizar, 30000); // cada 30s alcanza para minutos
 })();
 
 /* ================================================================
    5) MARCADOR DE UBICACIÓN → GOOGLE MAPS
    ================================================================ */
 document.getElementById('btnMapa').addEventListener('click', () => {
-  const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(CONFIG.direccionMaps);
-  window.open(url, '_blank', 'noopener');
+  window.open(CONFIG.urlMaps, '_blank', 'noopener');
 });
 
 /* ================================================================
@@ -527,6 +544,85 @@ document.getElementById('btnConfirmar').addEventListener('click', () => {
   const url = 'https://wa.me/' + CONFIG.telefonoWhatsapp + '?text=' + encodeURIComponent(mensaje);
   window.open(url, '_blank', 'noopener');
 });
+
+/* ================================================================
+   8) AUDIO DE FONDO — volumen medio, con respaldo ante bloqueo de
+      autoplay (los navegadores móviles requieren un primer toque)
+   ================================================================ */
+(function audioDeFondo(){
+  const audio = document.getElementById('audioFondo');
+  audio.src = CONFIG.audioArchivo;
+  audio.volume = CONFIG.audioVolumen;
+
+  let yaIniciado = false;
+
+  // Diagnóstico: si el archivo no carga (nombre, ruta o formato incorrecto),
+  // esto se ve en la consola del navegador (F12 → Console) como aviso.
+  audio.addEventListener('error', () => {
+    console.warn('No se pudo cargar el audio "'+CONFIG.audioArchivo+'". Verifica que el archivo esté en la misma carpeta que index.html, que el nombre coincida EXACTAMENTE (mayúsculas/minúsculas) y que sea un .mp3 válido.');
+  });
+
+  function intentarReproducir(){
+    if(yaIniciado) return;
+    const promesa = audio.play();
+    if(promesa !== undefined){
+      promesa.then(() => {
+        yaIniciado = true;
+        quitarListeners();
+      }).catch(() => {
+        /* el navegador bloqueó el autoplay; se reintentará con el próximo gesto del usuario */
+      });
+    }
+  }
+
+  function quitarListeners(){
+    document.removeEventListener('click', intentarReproducir);
+    document.removeEventListener('touchend', intentarReproducir);
+    document.removeEventListener('keydown', intentarReproducir);
+  }
+
+  // Intento inmediato al cargar (funciona en algunos navegadores de escritorio)
+  intentarReproducir();
+
+  // Respaldo: navegadores móviles (sobre todo iOS Safari) solo desbloquean
+  // audio en gestos "click"/"touchend" reales — NO en "pointerdown".
+  document.addEventListener('click', intentarReproducir);
+  document.addEventListener('touchend', intentarReproducir);
+  document.addEventListener('keydown', intentarReproducir);
+})();
+
+/* ================================================================
+   9) PROTECCIÓN BÁSICA CONTRA DESCARGA
+      (disuade a un visitante casual; no es un cifrado real: cualquier
+      archivo que el navegador puede mostrar o reproducir, técnicamente
+      puede "capturarse" — por ejemplo con una captura de pantalla o
+      grabación de pantalla, o por alguien con conocimientos técnicos
+      que abra las herramientas de desarrollador. Estas medidas bloquean
+      las formas más comunes: clic derecho, arrastrar y soltar, mantener
+      presionado en móvil, y atajos de teclado típicos de guardado)
+   ================================================================ */
+(function proteccionBasica(){
+  // Bloquear menú contextual (clic derecho / mantener presionado) en toda la página
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Bloquear arrastrar cualquier elemento (imágenes, enlaces)
+  document.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // Bloquear selección de texto/contenido
+  document.addEventListener('selectstart', (e) => e.preventDefault());
+
+  // Bloquear atajos comunes de guardado / inspección
+  document.addEventListener('keydown', (e) => {
+    const tecla = e.key ? e.key.toLowerCase() : '';
+    const combinacionGuardarVer =
+      ((e.ctrlKey || e.metaKey) && (tecla === 's' || tecla === 'u')) || // Ctrl/Cmd+S, Ctrl/Cmd+U
+      ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].includes(tecla)) || // DevTools
+      tecla === 'f12';
+    if(combinacionGuardarVer){
+      e.preventDefault();
+    }
+  });
+})();
 </script>
 
 </body>
