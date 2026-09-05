@@ -64,6 +64,8 @@
      ============================================================ */
   .capa-efectos{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
   #campoDestellos{ z-index:20; }
+  #capaDestellosCayendo{ z-index:23; }
+  #capaHumo{ z-index:24; }
   #capaMariposas{ z-index:45; }
   #capaLluvia{ z-index:50; }
 
@@ -222,6 +224,41 @@
   }
 
   /* ============================================================
+     LLUVIA DE DESTELLOS AMBIENTAL (cae sola, de forma continua)
+     ============================================================ */
+  .destello-cayendo{
+    position:absolute; top:-70px; pointer-events:none; opacity:0;
+    animation-name:caerDestello; animation-timing-function:linear; animation-fill-mode:forwards;
+    will-change:transform,opacity;
+  }
+  .destello-cayendo img{ width:100%; height:auto; display:block; }
+  @keyframes caerDestello{
+    0%{ transform:translate(0,0) rotate(0deg) scale(.5); opacity:0; }
+    10%{ opacity:var(--brilloMax,.8); }
+    72%{ opacity:var(--brilloMax,.8); }
+    100%{ transform:translate(var(--deriva),115vh) rotate(var(--giro)) scale(.9); opacity:0; }
+  }
+
+  /* ============================================================
+     NIEBLA / HUMO MÁGICO A LA DERIVA
+     ============================================================ */
+  .capa-humo{ mix-blend-mode:screen; }
+  .nube-humo{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(38px);
+    background:radial-gradient(circle, rgba(255,255,255,.42), rgba(200,230,255,.14) 55%, rgba(255,255,255,0) 75%);
+    animation-name:derivaHumo;
+    animation-timing-function:ease-in-out;
+    animation-iteration-count:infinite;
+  }
+  @keyframes derivaHumo{
+    0%{ transform:translate(-6%,0) scale(1); }
+    50%{ transform:translate(6%,-4%) scale(1.12); }
+    100%{ transform:translate(-6%,0) scale(1); }
+  }
+
+  /* ============================================================
      MARIPOSAS Y LLUVIA DE SOBRES
      ============================================================ */
   .mariposa-volando{
@@ -256,6 +293,8 @@
 <body>
 
 <div class="capa-efectos" id="campoDestellos" aria-hidden="true"></div>
+<div class="capa-efectos" id="capaDestellosCayendo" aria-hidden="true"></div>
+<div class="capa-efectos" id="capaHumo" aria-hidden="true"></div>
 <div class="capa-efectos" id="capaMariposas" aria-hidden="true"></div>
 <div class="capa-efectos" id="capaLluvia" aria-hidden="true"></div>
 
@@ -363,6 +402,71 @@ const CONFIG = {
     d.style.animationDelay = (Math.random()*5)+'s';
     d.innerHTML = svgChispa;
     contenedor.appendChild(d);
+  }
+})();
+
+/* ================================================================
+   1B) LLUVIA DE DESTELLOS AMBIENTAL (con destello.png) — cae sola,
+       de forma continua y aleatoria, y se desvanece naturalmente
+   ================================================================ */
+(function lluviaDeDestellosAmbiental(){
+  const capa = document.getElementById('capaDestellosCayendo');
+  let activos = 0;
+  const MAX_ACTIVOS = 26; // límite prudente para que no se acumulen de más
+
+  function crearDestelloCayendo(){
+    if(activos >= MAX_ACTIVOS){
+      programarSiguiente();
+      return;
+    }
+    activos++;
+
+    const d = document.createElement('div');
+    d.className = 'destello-cayendo';
+    const tam = 16 + Math.random()*26; // ancho en px
+    d.style.left = (Math.random()*100)+'%';
+    d.style.width = tam+'px';
+    d.style.setProperty('--deriva', ((Math.random()*2-1)*90).toFixed(0)+'px');
+    d.style.setProperty('--giro', ((Math.random()*2-1)*200).toFixed(0)+'deg');
+    d.style.setProperty('--brilloMax', (0.5 + Math.random()*0.4).toFixed(2));
+    const duracion = 7.5 + Math.random()*6.5; // 7.5s a 14s de caída
+    d.style.animationDuration = duracion+'s';
+    d.innerHTML = '<img src="destello.png" alt="" aria-hidden="true">';
+
+    d.addEventListener('animationend', () => { d.remove(); activos--; });
+    capa.appendChild(d);
+
+    programarSiguiente();
+  }
+
+  function programarSiguiente(){
+    // Intervalo aleatorio entre destellos para que la caída se vea progresiva y natural,
+    // no todos a la vez
+    const proximo = 380 + Math.random()*720; // entre ~0.4s y ~1.1s
+    setTimeout(crearDestelloCayendo, proximo);
+  }
+
+  crearDestelloCayendo();
+})();
+
+/* ================================================================
+   1C) NIEBLA / HUMO MÁGICO A LA DERIVA SOBRE LA INVITACIÓN
+   ================================================================ */
+(function crearNieblaAmbiental(){
+  const contenedor = document.getElementById('capaHumo');
+  const totalNubes = 5;
+  for(let i=0;i<totalNubes;i++){
+    const n = document.createElement('div');
+    n.className = 'nube-humo';
+    const tam = 260 + Math.random()*240; // px
+    n.style.width = tam+'px';
+    n.style.height = tam+'px';
+    n.style.top = (Math.random()*90)+'%';
+    n.style.left = (Math.random()*90)+'%';
+    n.style.opacity = (0.22 + Math.random()*0.22).toFixed(2);
+    n.style.animationDuration = (26 + Math.random()*20)+'s';
+    n.style.animationDelay = (Math.random()*10).toFixed(1)+'s';
+    contenedor.appendChild(n);
   }
 })();
 
